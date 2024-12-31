@@ -2,43 +2,53 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { useToast } from "@/components/ui/use-toast";
-import { supabase } from "@/lib/auth";
+import { authFormSchema } from "@/lib/validations/auth";
+import { useAuth } from "@/lib/hooks/use-auth";
 
-type AuthMode = "signin" | "signup";
+type FormData = {
+  email: string;
+  password: string;
+};
 
 export function AuthForm() {
-  const [mode, setMode] = useState<AuthMode>("signin");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const { signIn, signUp } = useAuth();
   const { toast } = useToast();
   const router = useRouter();
 
-  const handleAuth = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  const form = useForm<FormData>({
+    resolver: zodResolver(authFormSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
 
+  const onSubmit = async (data: FormData) => {
+    setIsLoading(true);
     try {
       if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-        });
-        if (error) throw error;
+        await signUp(data.email, data.password);
         toast({
           title: "Success!",
           description: "Please check your email to verify your account.",
         });
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-        if (error) throw error;
+        await signIn(data.email, data.password);
         router.push("/dashboard");
       }
     } catch (error: any) {
@@ -48,45 +58,71 @@ export function AuthForm() {
         variant: "destructive",
       });
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleAuth} className="space-y-4 w-full max-w-sm">
-      <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
-        <Input
-          id="email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input
+                  type="email"
+                  placeholder="Enter your email"
+                  {...field}
+                  disabled={isLoading}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="password">Password</Label>
-        <Input
-          id="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
+
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <Input
+                  type="password"
+                  placeholder="Enter your password"
+                  {...field}
+                  disabled={isLoading}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </div>
-      <Button type="submit" className="w-full" disabled={loading}>
-        {loading ? "Loading..." : mode === "signin" ? "Sign In" : "Sign Up"}
-      </Button>
-      <p className="text-center text-sm">
-        {mode === "signin" ? "Don't have an account? " : "Already have an account? "}
-        <button
-          type="button"
-          onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
-          className="text-pink-500 hover:underline"
-        >
-          {mode === "signin" ? "Sign Up" : "Sign In"}
-        </button>
-      </p>
-    </form>
+
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading
+            ? "Loading..."
+            : mode === "signin"
+            ? "Sign In"
+            : "Sign Up"}
+        </Button>
+
+        <p className="text-center text-sm">
+          {mode === "signin" ? "Don't have an account? " : "Already have an account? "}
+          <button
+            type="button"
+            onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
+            className="text-pink-500 hover:underline"
+            disabled={isLoading}
+          >
+            {mode === "signin" ? "Sign Up" : "Sign In"}
+          </button>
+        </p>
+      </form>
+    </Form>
   );
 }
