@@ -2,27 +2,47 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/lib/hooks/use-auth";
 
 export function DeleteAccount() {
   const [isDeleting, setIsDeleting] = useState(false);
-  const { deleteAccount } = useAuth();
-  const { toast } = useToast();
+  const { deleteAccount } = useAuth(); // Get the deleteAccount method from AuthContext
+  const { toast } = useToast(); // Toast notifications
   const router = useRouter();
 
   const handleDelete = async () => {
+    if (!deleteAccount) {
+      toast({
+        title: "Error",
+        description: "Delete account function is unavailable.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       setIsDeleting(true);
-      await deleteAccount();
-      router.push("/");
+      await deleteAccount(); // Call the deleteAccount function
       toast({
         title: "Account deleted",
         description: "Your account has been successfully deleted.",
       });
+      router.push("/"); // Redirect to the home page
     } catch (error: any) {
+      console.error("Error deleting account:", error); // Log the error
       toast({
         title: "Error",
         description: error.message,
