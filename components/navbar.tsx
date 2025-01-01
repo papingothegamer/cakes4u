@@ -3,10 +3,17 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Cake, Menu, X } from "lucide-react";
+import { Cake, Menu, X, User } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/hooks/use-auth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const navigation = [
   { name: "Home", href: "/" },
@@ -31,7 +38,7 @@ export function Navbar() {
     <nav className="bg-white shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
-          <div className="flex">
+          <div className="flex items-center">
             <Link href="/" className="flex-shrink-0 flex items-center">
               <Cake className="h-8 w-8 text-pink-500" />
               <span className="ml-2 text-xl font-bold text-gray-900">Cakes4U</span>
@@ -39,16 +46,16 @@ export function Navbar() {
           </div>
 
           {/* Desktop menu */}
-          <div className="hidden sm:flex sm:space-x-8">
+          <div className="hidden md:flex md:items-center md:space-x-4">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
                 className={cn(
-                  "inline-flex items-center px-1 pt-1 text-sm font-medium",
+                  "px-3 py-2 rounded-md text-sm font-medium",
                   pathname === item.href
-                    ? "text-pink-500 border-b-2 border-pink-500"
-                    : "text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                    ? "text-pink-500 bg-pink-50"
+                    : "text-gray-500 hover:text-gray-700 hover:bg-gray-100"
                 )}
               >
                 {item.name}
@@ -58,36 +65,48 @@ export function Navbar() {
               <Link
                 href="/dashboard"
                 className={cn(
-                  "inline-flex items-center px-1 pt-1 text-sm font-medium",
+                  "px-3 py-2 rounded-md text-sm font-medium",
                   pathname === "/dashboard"
-                    ? "text-pink-500 border-b-2 border-pink-500"
-                    : "text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                    ? "text-pink-500 bg-pink-50"
+                    : "text-gray-500 hover:text-gray-700 hover:bg-gray-100"
                 )}
               >
                 Dashboard
               </Link>
             )}
             {user ? (
-              <Button
-                variant="outline"
-                onClick={handleSignOut}
-                className="text-gray-600"
-              >
-                Sign Out
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="ml-2">
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback>
+                        <User className="h-4 w-4" />
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem asChild>
+                    <Link href="/account">Account Settings</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
               <Button
                 variant="default"
-                className="bg-pink-500 hover:bg-pink-600"
+                className="bg-pink-500 hover:bg-pink-600 text-white"
                 asChild
               >
-                <Link href="/auth">Sign In</Link>
+                <Link href="/auth/login">Sign In</Link>
               </Button>
             )}
           </div>
 
           {/* Mobile menu button */}
-          <div className="sm:hidden flex items-center">
+          <div className="md:hidden flex items-center">
             <Button
               variant="ghost"
               size="icon"
@@ -106,18 +125,19 @@ export function Navbar() {
 
       {/* Mobile menu */}
       {isOpen && (
-        <div className="sm:hidden">
-          <div className="pt-2 pb-3 space-y-1">
+        <div className="md:hidden">
+          <div className="px-2 pt-2 pb-3 space-y-1">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
                 className={cn(
-                  "block pl-3 pr-4 py-2 text-base font-medium",
+                  "block px-3 py-2 rounded-md text-base font-medium",
                   pathname === item.href
-                    ? "text-pink-500 bg-pink-50 border-l-4 border-pink-500"
-                    : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                    ? "text-pink-500 bg-pink-50"
+                    : "text-gray-500 hover:text-gray-700 hover:bg-gray-100"
                 )}
+                onClick={() => setIsOpen(false)}
               >
                 {item.name}
               </Link>
@@ -126,13 +146,23 @@ export function Navbar() {
               <Link
                 href="/dashboard"
                 className={cn(
-                  "block pl-3 pr-4 py-2 text-base font-medium",
+                  "block px-3 py-2 rounded-md text-base font-medium",
                   pathname === "/dashboard"
-                    ? "text-pink-500 bg-pink-50 border-l-4 border-pink-500"
-                    : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                    ? "text-pink-500 bg-pink-50"
+                    : "text-gray-500 hover:text-gray-700 hover:bg-gray-100"
                 )}
+                onClick={() => setIsOpen(false)}
               >
                 Dashboard
+              </Link>
+            )}
+            {user && (
+              <Link
+                href="/account-settings"
+                className="block px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                onClick={() => setIsOpen(false)}
+              >
+                Account Settings
               </Link>
             )}
             <div className="px-3 py-2">
@@ -141,8 +171,8 @@ export function Navbar() {
                   Sign Out
                 </Button>
               ) : (
-                <Button className="w-full bg-pink-500 hover:bg-pink-600" asChild>
-                  <Link href="/auth">Sign In</Link>
+                <Button className="w-full bg-pink-500 hover:bg-pink-600 text-white" asChild>
+                  <Link href="/auth" onClick={() => setIsOpen(false)}>Sign In</Link>
                 </Button>
               )}
             </div>
@@ -152,3 +182,4 @@ export function Navbar() {
     </nav>
   );
 }
+
