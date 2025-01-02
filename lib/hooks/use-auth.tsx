@@ -1,3 +1,4 @@
+// use-auth.tsx
 "use client";
 
 import { useEffect, useState, createContext, useContext, ReactNode } from "react";
@@ -53,7 +54,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!user) throw new Error("No user logged in");
 
     try {
-      // 1. Delete profile data first
       const { error: profileError } = await supabase
         .from("profiles")
         .delete()
@@ -61,14 +61,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       if (profileError) throw profileError;
 
-      // 2. Call Supabase's delete user endpoint
-      const { error: deleteError } = await supabase.auth.admin.deleteUser(user.id);
-      
-      if (deleteError) throw deleteError;
-
-      // 3. Sign out the user
       await signOut();
-
+      
     } catch (error) {
       console.error("Error deleting account:", error);
       throw error;
