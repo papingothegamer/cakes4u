@@ -3,7 +3,7 @@ export type OrderDetails = {
   servings: number;
   occasion: string;
   deliveryDate: Date;
-  description: string;
+  description?: string; // Made optional since it's not in the schema
   referenceImages?: File[];
   allergyInfo?: string;
 };
@@ -24,7 +24,6 @@ export type Order = {
   servings: number;
   occasion: string;
   delivery_date: string;
-  description: string;
   allergy_info?: string;
   status: OrderStatus;
   created_at: string;

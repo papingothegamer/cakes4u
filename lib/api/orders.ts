@@ -6,95 +6,63 @@ export async function createOrder(
   contactDetails: ContactDetails,
   userId: string
 ) {
-  const { data: order, error: orderError } = await supabase
-    .from('orders')
-    .insert({
-      user_id: userId,
-      type: orderDetails.type,
-      servings: orderDetails.servings,
-      occasion: orderDetails.occasion,
-      delivery_date: orderDetails.deliveryDate,
-      description: orderDetails.description,
-      allergy_info: orderDetails.allergyInfo,
-    })
-    .select()
-    .single();
+  try {
+    // Create order record
+    const { data: order, error: orderError } = await supabase
+      .from('orders')
+      .insert({
+        user_id: userId,
+        type: orderDetails.type,
+        servings: orderDetails.servings,
+        occasion: orderDetails.occasion,
+        delivery_date: orderDetails.deliveryDate.toISOString(),
+        description: orderDetails.description,
+        allergy_info: orderDetails.allergyInfo,
+        status: 'pending',
+        contact_email: contactDetails.email,
+        contact_name: contactDetails.name,
+        contact_phone: contactDetails.phone,
+        delivery_address: contactDetails.address
+      })
+      .select()
+      .single();
 
-  if (orderError) throw orderError;
+    if (orderError) {
+      console.error('Order creation error:', orderError);
+      throw new Error('Failed to create order');
+    }
 
-  // Handle image uploads if present
-  if (orderDetails.referenceImages?.length) {
-    const imagePromises = orderDetails.referenceImages.map(async (file) => {
-      const fileName = `${order.id}/${file.name}`;
-      const { error: uploadError } = await supabase.storage
-        .from('order-images')
-        .upload(fileName, file);
+    // Handle image uploads if present
+    if (orderDetails.referenceImages?.length) {
+      const imagePromises = orderDetails.referenceImages.map(async (file) => {
+        const fileName = `${order.id}/${file.name}`;
+        const { error: uploadError } = await supabase.storage
+          .from('order-images')
+          .upload(fileName, file);
 
-      if (uploadError) throw uploadError;
+        if (uploadError) {
+          console.error('Image upload error:', uploadError);
+          return null;
+        }
 
-      const { data: { publicUrl } } = supabase.storage
-        .from('order-images')
-        .getPublicUrl(fileName);
+        const { data: { publicUrl } } = supabase.storage
+          .from('order-images')
+          .getPublicUrl(fileName);
 
-      return supabase
-        .from('order_images')
-        .insert({
-          order_id: order.id,
-          image_url: publicUrl,
-        });
-    });
+        return supabase
+          .from('order_images')
+          .insert({
+            order_id: order.id,
+            image_url: publicUrl,
+          });
+      });
 
-    await Promise.all(imagePromises);
+      await Promise.allSettled(imagePromises);
+    }
+
+    return order;
+  } catch (error) {
+    console.error('Order creation failed:', error);
+    throw error;
   }
-
-  // Send email notification
-  await sendOrderNotification(order.id, orderDetails, contactDetails);
-
-  return order;
-}
-
-export async function getUserOrders(userId: string) {
-  const { data: orders, error } = await supabase
-    .from('orders')
-    .select(`
-      *,
-      order_images (
-        image_url
-      )
-    `)
-    .eq('user_id', userId)
-    .order('created_at', { ascending: false });
-
-  if (error) throw error;
-  return orders;
-}
-
-async function sendOrderNotification(
-  orderId: string,
-  orderDetails: OrderDetails,
-  contactDetails: ContactDetails
-) {
-  // In a real application, you would integrate with an email service
-  // For now, we'll use mailto as specified
-  const subject = `New Cake Order - ${orderDetails.type} for ${orderDetails.occasion}`;
-  const body = `
-Order #${orderId}
-
-Order Details:
-- Type: ${orderDetails.type}
-- Servings: ${orderDetails.servings}
-- Occasion: ${orderDetails.occasion}
-- Delivery Date: ${orderDetails.deliveryDate.toLocaleDateString()}
-- Description: ${orderDetails.description}
-- Allergy Information: ${orderDetails.allergyInfo || 'None provided'}
-
-Contact Information:
-- Name: ${contactDetails.name}
-- Email: ${contactDetails.email}
-- Phone: ${contactDetails.phone}
-- Address: ${contactDetails.address}
-  `;
-
-  // For development, return the email content
-  return { subject, body };
 }

@@ -1,12 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import { OrderDetails } from "@/types/order";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
-import { Calendar as CalendarIcon, Upload } from "lucide-react";
+import { CalendarIcon, Upload, X, Edit, Plus } from 'lucide-react';
+import { Input } from "@/components/ui/input";
 
 type Props = {
   data: Partial<OrderDetails>;
@@ -16,9 +18,28 @@ type Props = {
 };
 
 export function DeliveryForm({ data, onUpdate, onNext, onBack }: Props) {
+  const [selectedImages, setSelectedImages] = useState<File[]>(data.referenceImages || []);
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      onUpdate({ referenceImages: Array.from(e.target.files) });
+      const newImages = Array.from(e.target.files);
+      setSelectedImages(prevImages => [...prevImages, ...newImages]);
+      onUpdate({ referenceImages: [...selectedImages, ...newImages] });
+    }
+  };
+
+  const handleDeleteImage = (index: number) => {
+    const updatedImages = selectedImages.filter((_, i) => i !== index);
+    setSelectedImages(updatedImages);
+    onUpdate({ referenceImages: updatedImages });
+  };
+
+  const handleUpdateImage = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const updatedImages = [...selectedImages];
+      updatedImages[index] = e.target.files[0];
+      setSelectedImages(updatedImages);
+      onUpdate({ referenceImages: updatedImages });
     }
   };
 
@@ -74,11 +95,45 @@ export function DeliveryForm({ data, onUpdate, onNext, onBack }: Props) {
               />
             </label>
           </div>
-          {data.referenceImages && data.referenceImages.length > 0 && (
-            <p className="mt-2 text-sm text-gray-600">
-              {data.referenceImages.length} images selected
-            </p>
+          {selectedImages.length > 0 && (
+            <div className="mt-4 space-y-2">
+              {selectedImages.map((image, index) => (
+                <div key={index} className="flex items-center space-x-2">
+                  <span className="text-sm truncate">{image.name}</span>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleDeleteImage(index)}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                  <label>
+                    <Button type="button" variant="ghost" size="icon" asChild>
+                      <span>
+                        <Edit className="h-4 w-4" />
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => handleUpdateImage(index, e)}
+                        />
+                      </span>
+                    </Button>
+                  </label>
+                </div>
+              ))}
+            </div>
           )}
+          <div className="mt-4">
+            <p className="text-sm text-gray-600">
+              You can also email your reference images to{" "}
+              <a href="mailto:cakes4ufoods@gmail.com" className="text-pink-600 hover:underline">
+                cakes4ufoods@gmail.com
+              </a>{" "}
+              with your order number in the subject line.
+            </p>
+          </div>
         </div>
       </div>
 
@@ -93,3 +148,4 @@ export function DeliveryForm({ data, onUpdate, onNext, onBack }: Props) {
     </form>
   );
 }
+

@@ -4,6 +4,11 @@ import { OrderDetails, ContactDetails } from "@/types/order";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { Mail } from "lucide-react";
+import { useAuth } from "@/lib/hooks/use-auth";
+import { useToast } from "@/components/ui/use-toast";
+import { useRouter } from "next/navigation";
+import { createOrder } from "@/lib/api/orders";
+import { sendOrderEmails } from "@/lib/email/send";
 
 type Props = {
   orderDetails: OrderDetails;
@@ -12,27 +17,44 @@ type Props = {
 };
 
 export function OrderSummary({ orderDetails, contactDetails, onBack }: Props) {
-  const handleSubmit = (e: React.FormEvent) => {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const subject = encodeURIComponent(`New Cake Order - ${orderDetails.type} for ${orderDetails.occasion}`);
-    const body = encodeURIComponent(`
-Order Details:
-- Type: ${orderDetails.type}
-- Servings: ${orderDetails.servings}
-- Occasion: ${orderDetails.occasion}
-- Delivery Date: ${format(orderDetails.deliveryDate, "PPP")}
-- Description: ${orderDetails.description}
-- Allergy Information: ${orderDetails.allergyInfo}
+    if (!user) {
+      toast({
+        title: "Error",
+        description: "Please sign in to submit your order",
+        variant: "destructive",
+      });
+      router.push("/auth/login");
+      return;
+    }
 
-Contact Information:
-- Name: ${contactDetails.name}
-- Email: ${contactDetails.email}
-- Phone: ${contactDetails.phone}
-- Address: ${contactDetails.address}
-    `);
-
-    window.location.href = `mailto:orders@cakes4u.com?subject=${subject}&body=${body}`;
+    try {
+      // Create order in database
+      const order = await createOrder(orderDetails, contactDetails, user.id);
+      
+      // Send confirmation emails
+      await sendOrderEmails(order.id, orderDetails, contactDetails);
+      
+      toast({
+        title: "Success",
+        description: "Your order has been submitted successfully!",
+      });
+      
+      router.push("/dashboard");
+    } catch (error: any) {
+      console.error('Order submission error:', error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to submit order",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
