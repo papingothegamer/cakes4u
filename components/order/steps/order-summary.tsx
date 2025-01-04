@@ -8,7 +8,7 @@ import { useAuth } from "@/lib/hooks/use-auth";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import { createOrder } from "@/lib/api/orders";
-import { sendOrderEmails } from "@/lib/email/send";
+import { generateMailtoLink } from "@/lib/email/send";
 
 type Props = {
   orderDetails: OrderDetails;
@@ -38,12 +38,12 @@ export function OrderSummary({ orderDetails, contactDetails, onBack }: Props) {
       // Create order in database
       const order = await createOrder(orderDetails, contactDetails, user.id);
       
-      // Send confirmation emails
-      await sendOrderEmails(order.id, orderDetails, contactDetails);
+      // Open mailto link
+      window.location.href = generateMailtoLink(orderDetails, contactDetails);
       
       toast({
         title: "Success",
-        description: "Your order has been submitted successfully!",
+        description: "Your order has been submitted successfully! Please send the email to complete your order.",
       });
       
       router.push("/dashboard");

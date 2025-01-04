@@ -1,51 +1,48 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { format } from "date-fns";
 import { useRouter } from "next/navigation";
-import { getUserOrders } from "@/lib/api/orders";
-import { supabase } from "@/lib/supabase";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { useAuth } from "@/lib/hooks/use-auth";
 import { useToast } from "@/components/ui/use-toast";
-
-interface Order {
-  id: string;
-  created_at: string;
-  type: string;
-  occasion: string;
-  delivery_date: string;
-  status: string;
-}
+import { getUserOrders } from "@/lib/api/orders";
+import { Order } from "@/types/order";
+import { OrdersTable } from "@/components/dashboard/orders-table";
+import { EmptyOrders } from "@/components/dashboard/empty-orders";
 
 export default function DashboardPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const router = useRouter();
 
   useEffect(() => {
+    // Don't do anything while auth is loading
+    if (authLoading) {
+      return;
+    }
+
+    // Redirect if no user
+    if (!user) {
+      router.push("/auth/login");
+      return;
+    }
+
     async function loadOrders() {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
-          router.push("/auth");
-          return;
-        }
-
+        if (!user) return; 
         const userOrders = await getUserOrders(user.id);
         setOrders(userOrders);
-      } catch (error: any) {
+      } catch (error) {
+        const errorMessage = error instanceof Error 
+          ? error.message 
+          : "An unknown error occurred while fetching orders";
+        
         toast({
-          title: "Error",
-          description: error.message,
+          title: "Error loading orders",
+          description: errorMessage,
           variant: "destructive",
         });
       } finally {
@@ -54,14 +51,22 @@ export default function DashboardPage() {
     }
 
     loadOrders();
-  }, [router, toast]);
+  }, [user, authLoading, router, toast]);
 
-  if (loading) {
+  // Show loading state while auth is being checked
+  if (authLoading) {
     return (
-      <div className="min-h-screen py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">Loading...</div>
-        </div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">Checking authentication...</div>
+      </div>
+    );
+  }
+
+  // Show loading state while redirecting
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">Redirecting to login...</div>
       </div>
     );
   }
@@ -70,50 +75,23 @@ export default function DashboardPage() {
     <div className="min-h-screen py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">My Orders</h1>
+          <div>
+            <h1 className="text-3xl font-bold">My Orders</h1>
+            <p className="mt-2 text-gray-600">
+              View and manage your cake orders
+            </p>
+          </div>
           <Button asChild>
-            <a href="/order">Place New Order</a>
+            <Link href="/order">Place New Order</Link>
           </Button>
         </div>
 
-        {orders.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-gray-600 mb-4">You haven't placed any orders yet.</p>
-            <Button asChild>
-              <a href="/order">Place Your First Order</a>
-            </Button>
-          </div>
+        {loading ? (
+          <div className="text-center py-12">Loading orders...</div>
+        ) : orders.length === 0 ? (
+          <EmptyOrders />
         ) : (
-          <div className="bg-white shadow-sm rounded-lg overflow-hidden">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Order Date</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Occasion</TableHead>
-                  <TableHead>Delivery Date</TableHead>
-                  <TableHead>Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {orders.map((order: Order) => (
-                  <TableRow key={order.id}>
-                    <TableCell>
-                      {format(new Date(order.created_at), "PPP")}
-                    </TableCell>
-                    <TableCell>{order.type}</TableCell>
-                    <TableCell>{order.occasion}</TableCell>
-                    <TableCell>
-                      {format(new Date(order.delivery_date), "PPP")}
-                    </TableCell>
-                    <TableCell>
-                      <span className="capitalize">{order.status}</span>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+          <OrdersTable orders={orders} />
         )}
       </div>
     </div>

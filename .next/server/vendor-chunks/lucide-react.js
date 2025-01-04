@@ -41,6 +41,16 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 
 /***/ }),
 
+/***/ "(ssr)/./node_modules/lucide-react/dist/esm/icons/cake-slice.js":
+/*!****************************************************************!*\
+  !*** ./node_modules/lucide-react/dist/esm/icons/cake-slice.js ***!
+  \****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ CakeSlice)\n/* harmony export */ });\n/* harmony import */ var _createLucideIcon_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../createLucideIcon.js */ \"(ssr)/./node_modules/lucide-react/dist/esm/createLucideIcon.js\");\n/**\n * @license lucide-react v0.446.0 - ISC\n *\n * This source code is licensed under the ISC license.\n * See the LICENSE file in the root directory of this source tree.\n */\n\n\n\nconst CakeSlice = (0,_createLucideIcon_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(\"CakeSlice\", [\n  [\"circle\", { cx: \"9\", cy: \"7\", r: \"2\", key: \"1305pl\" }],\n  [\n    \"path\",\n    { d: \"M7.2 7.9 3 11v9c0 .6.4 1 1 1h16c.6 0 1-.4 1-1v-9c0-2-3-6-7-8l-3.6 2.6\", key: \"xle13f\" }\n  ],\n  [\"path\", { d: \"M16 13H3\", key: \"1wpj08\" }],\n  [\"path\", { d: \"M16 17H3\", key: \"3lvfcd\" }]\n]);\n\n\n//# sourceMappingURL=cake-slice.js.map\n//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiKHNzcikvLi9ub2RlX21vZHVsZXMvbHVjaWRlLXJlYWN0L2Rpc3QvZXNtL2ljb25zL2Nha2Utc2xpY2UuanMiLCJtYXBwaW5ncyI6Ijs7Ozs7QUFBQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7O0FBRXNEOztBQUV0RCxrQkFBa0IsZ0VBQWdCO0FBQ2xDLGVBQWUseUNBQXlDO0FBQ3hEO0FBQ0E7QUFDQSxNQUFNO0FBQ047QUFDQSxhQUFhLDhCQUE4QjtBQUMzQyxhQUFhLDhCQUE4QjtBQUMzQzs7QUFFZ0M7QUFDaEMiLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly9jYWtlczR1Ly4vbm9kZV9tb2R1bGVzL2x1Y2lkZS1yZWFjdC9kaXN0L2VzbS9pY29ucy9jYWtlLXNsaWNlLmpzP2Y0MzIiXSwic291cmNlc0NvbnRlbnQiOlsiLyoqXG4gKiBAbGljZW5zZSBsdWNpZGUtcmVhY3QgdjAuNDQ2LjAgLSBJU0NcbiAqXG4gKiBUaGlzIHNvdXJjZSBjb2RlIGlzIGxpY2Vuc2VkIHVuZGVyIHRoZSBJU0MgbGljZW5zZS5cbiAqIFNlZSB0aGUgTElDRU5TRSBmaWxlIGluIHRoZSByb290IGRpcmVjdG9yeSBvZiB0aGlzIHNvdXJjZSB0cmVlLlxuICovXG5cbmltcG9ydCBjcmVhdGVMdWNpZGVJY29uIGZyb20gJy4uL2NyZWF0ZUx1Y2lkZUljb24uanMnO1xuXG5jb25zdCBDYWtlU2xpY2UgPSBjcmVhdGVMdWNpZGVJY29uKFwiQ2FrZVNsaWNlXCIsIFtcbiAgW1wiY2lyY2xlXCIsIHsgY3g6IFwiOVwiLCBjeTogXCI3XCIsIHI6IFwiMlwiLCBrZXk6IFwiMTMwNXBsXCIgfV0sXG4gIFtcbiAgICBcInBhdGhcIixcbiAgICB7IGQ6IFwiTTcuMiA3LjkgMyAxMXY5YzAgLjYuNCAxIDEgMWgxNmMuNiAwIDEtLjQgMS0xdi05YzAtMi0zLTYtNy04bC0zLjYgMi42XCIsIGtleTogXCJ4bGUxM2ZcIiB9XG4gIF0sXG4gIFtcInBhdGhcIiwgeyBkOiBcIk0xNiAxM0gzXCIsIGtleTogXCIxd3BqMDhcIiB9XSxcbiAgW1wicGF0aFwiLCB7IGQ6IFwiTTE2IDE3SDNcIiwga2V5OiBcIjNsdmZjZFwiIH1dXG5dKTtcblxuZXhwb3J0IHsgQ2FrZVNsaWNlIGFzIGRlZmF1bHQgfTtcbi8vIyBzb3VyY2VNYXBwaW5nVVJMPWNha2Utc2xpY2UuanMubWFwXG4iXSwibmFtZXMiOltdLCJzb3VyY2VSb290IjoiIn0=\n//# sourceURL=webpack-internal:///(ssr)/./node_modules/lucide-react/dist/esm/icons/cake-slice.js\n");
+
+/***/ }),
+
 /***/ "(ssr)/./node_modules/lucide-react/dist/esm/icons/cake.js":
 /*!**********************************************************!*\
   !*** ./node_modules/lucide-react/dist/esm/icons/cake.js ***!

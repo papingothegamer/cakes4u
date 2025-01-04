@@ -1,27 +1,26 @@
 import { OrderDetails, ContactDetails } from "@/types/order";
+import { format } from "date-fns";
 
-export async function sendOrderEmails(
-  orderId: string,
+export function generateMailtoLink(
   orderDetails: OrderDetails,
   contactDetails: ContactDetails
 ) {
-  const response = await fetch("/api/send-order-emails", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      orderId,
-      orderDetails,
-      contactDetails,
-    }),
-  });
+  const subject = encodeURIComponent(`New Cake Order - ${orderDetails.occasion}`);
+  
+  const body = encodeURIComponent(`
+Order Details:
+- Type: ${orderDetails.type}
+- Servings: ${orderDetails.servings}
+- Occasion: ${orderDetails.occasion}
+- Delivery Date: ${format(orderDetails.deliveryDate, "PPP")}
+${orderDetails.allergyInfo ? `- Allergy Information: ${orderDetails.allergyInfo}` : ''}
 
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error || "Failed to send order confirmation emails");
-  }
+Contact Information:
+- Name: ${contactDetails.name}
+- Email: ${contactDetails.email}
+- Phone: ${contactDetails.phone}
+- Address: ${contactDetails.address}
+  `);
 
-  return response.json();
+  return `mailto:cakes4ufoods@gmail.com?subject=${subject}&body=${body}`;
 }
-

@@ -1,6 +1,9 @@
 import { supabase } from '@/lib/supabase';
-import { OrderDetails, ContactDetails } from '@/types/order';
+import { Order, OrderDetails, ContactDetails } from '@/types/order';
 
+/**
+ * Create a new order in the database
+ */
 export async function createOrder(
   orderDetails: OrderDetails,
   contactDetails: ContactDetails,
@@ -34,30 +37,7 @@ export async function createOrder(
 
     // Handle image uploads if present
     if (orderDetails.referenceImages?.length) {
-      const imagePromises = orderDetails.referenceImages.map(async (file) => {
-        const fileName = `${order.id}/${file.name}`;
-        const { error: uploadError } = await supabase.storage
-          .from('order-images')
-          .upload(fileName, file);
-
-        if (uploadError) {
-          console.error('Image upload error:', uploadError);
-          return null;
-        }
-
-        const { data: { publicUrl } } = supabase.storage
-          .from('order-images')
-          .getPublicUrl(fileName);
-
-        return supabase
-          .from('order_images')
-          .insert({
-            order_id: order.id,
-            image_url: publicUrl,
-          });
-      });
-
-      await Promise.allSettled(imagePromises);
+      await uploadOrderImages(order.id, orderDetails.referenceImages);
     }
 
     return order;
@@ -65,4 +45,57 @@ export async function createOrder(
     console.error('Order creation failed:', error);
     throw error;
   }
+}
+
+/**
+ * Get all orders for a specific user
+ */
+export async function getUserOrders(userId: string): Promise<Order[]> {
+  const { data, error } = await supabase
+    .from('orders')
+    .select(`
+      *,
+      order_images (
+        image_url
+      )
+    `)
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching orders:', error);
+    throw new Error('Failed to fetch orders');
+  }
+
+  return data || [];
+}
+
+/**
+ * Upload images for an order
+ */
+async function uploadOrderImages(orderId: string, files: File[]) {
+  const imagePromises = files.map(async (file) => {
+    const fileName = `${orderId}/${file.name}`;
+    const { error: uploadError } = await supabase.storage
+      .from('order-images')
+      .upload(fileName, file);
+
+    if (uploadError) {
+      console.error('Image upload error:', uploadError);
+      return null;
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('order-images')
+      .getPublicUrl(fileName);
+
+    return supabase
+      .from('order_images')
+      .insert({
+        order_id: orderId,
+        image_url: publicUrl,
+      });
+  });
+
+  await Promise.allSettled(imagePromises);
 }
