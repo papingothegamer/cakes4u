@@ -1,19 +1,46 @@
 import { supabase } from '@/lib/supabase';
 import { Order, OrderDetails, ContactDetails } from '@/types/order';
 
-/**
- * Create a new order in the database
- */
+function generateOrderNumber() {
+  const timestamp = Date.now().toString().slice(-6);
+  const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+  return `ORD-${timestamp}${random}`;
+}
+
+export async function getUserOrders(userId: string): Promise<Order[]> {
+  const { data, error } = await supabase
+    .from('orders')
+    .select(`
+      *,
+      order_images (
+        id,
+        image_url
+      )
+    `)
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching orders:', error);
+    throw new Error('Failed to fetch orders');
+  }
+
+  return data || [];
+}
+
 export async function createOrder(
   orderDetails: OrderDetails,
   contactDetails: ContactDetails,
   userId: string
 ) {
   try {
+    const orderNumber = generateOrderNumber();
+    
     // Create order record
     const { data: order, error: orderError } = await supabase
       .from('orders')
       .insert({
+        order_number: orderNumber,
         user_id: userId,
         type: orderDetails.type,
         servings: orderDetails.servings,
@@ -47,32 +74,6 @@ export async function createOrder(
   }
 }
 
-/**
- * Get all orders for a specific user
- */
-export async function getUserOrders(userId: string): Promise<Order[]> {
-  const { data, error } = await supabase
-    .from('orders')
-    .select(`
-      *,
-      order_images (
-        image_url
-      )
-    `)
-    .eq('user_id', userId)
-    .order('created_at', { ascending: false });
-
-  if (error) {
-    console.error('Error fetching orders:', error);
-    throw new Error('Failed to fetch orders');
-  }
-
-  return data || [];
-}
-
-/**
- * Upload images for an order
- */
 async function uploadOrderImages(orderId: string, files: File[]) {
   const imagePromises = files.map(async (file) => {
     const fileName = `${orderId}/${file.name}`;
