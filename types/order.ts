@@ -34,5 +34,6 @@ export type Order = {
   delivery_address: string;
   created_at: string;
   updated_at: string;
-  order_images?: { image_url: string }[];
-};
+  order_images?: { image_url: string, image_key: string}[];
+}
+

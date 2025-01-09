@@ -1,5 +1,3 @@
-"use client";
-
 import { format } from "date-fns";
 import { Order } from "@/types/order";
 import { OrderStatusBadge } from "./order-status-badge";
@@ -14,6 +12,8 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Download } from "lucide-react"; // Assuming you're using lucide-react icons
+import { generateOrderPDF } from "../order/order-pdf"; // Adjust the import path based on where your generateOrderPDF function is located
 
 type Props = {
   orders: Order[];
@@ -72,7 +72,7 @@ export function OrdersTable({ orders }: Props) {
           <DialogHeader>
             <DialogTitle>Order Details #{selectedOrder?.order_number}</DialogTitle>
           </DialogHeader>
-          
+
           {selectedOrder && (
             <div className="grid grid-cols-2 gap-6">
               <div>
@@ -100,7 +100,7 @@ export function OrdersTable({ orders }: Props) {
                   </div>
                 </dl>
               </div>
-              
+
               <div>
                 <h3 className="font-semibold mb-2">Delivery Information</h3>
                 <dl className="space-y-2">
@@ -142,6 +142,30 @@ export function OrdersTable({ orders }: Props) {
                   </div>
                 </div>
               )}
+
+              {/* Download PDF Button */}
+              <div className="col-span-2 flex justify-end mt-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => generateOrderPDF({ 
+                    orderNumber: selectedOrder.order_number, 
+                    orderDetails: {
+                      ...selectedOrder,
+                      deliveryDate: new Date(selectedOrder.delivery_date), // Add the Date object
+                    },
+                    contactDetails: {
+                      name: selectedOrder.contact_name,
+                      email: selectedOrder.contact_email,
+                      phone: selectedOrder.contact_phone,
+                      address: selectedOrder.delivery_address,
+                    }, 
+                    imageKeys: selectedOrder.order_images?.map(img => img.image_url) || [] // Pass image keys
+                  })}
+                >
+                  <Download className="mr-2" /> Download PDF
+                </Button>
+              </div>
             </div>
           )}
         </DialogContent>
