@@ -26,17 +26,17 @@ const images: GalleryImage[] = [
   },
   {
     id: 2,
-    src: "api/images/pink-roses-wedding-cake.jpg",
-    alt: "Pink Roses Wedding Cake",
+    src: "https://images.unsplash.com/photo-1535254973040-607b474cb50d?q=80&w=2487&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    alt: "Pink Rose Wedding Cake",
     category: "Wedding",
-    description: "White wedding cake decorated with cascading pink fondant roses and rhinestone band"
+    description: "Pink wedding cake decorated with cascading pink fondant roses and pearlized band"
   },
   {
     id: 3,
     src: "api/images/birthday/PHOTO-2024-11-28-02-09-59 5.jpg",
     alt: "50th Birthday Celebration Cake",
     category: "Birthday",
-    description: "Three-tier birthday cake with gold accents, photo frame, and pink damask pattern"
+    description: "Three-tier birthday cake with gold accents, and marbled pattern"
   },
   {
     id: 4,
@@ -61,80 +61,80 @@ const images: GalleryImage[] = [
   },
   {
     id: 7,
-    src: "/images/oh-baby-cake.jpg",
+    src: "https://images.unsplash.com/photo-1579736283361-4008b21c7ed6?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     alt: "Oh Baby Celebration Cake",
     category: "Baby Shower",
-    description: "Pastel colored cake with baby bottle motifs and 'Oh Baby' topper"
+    description: "Pastel colored cake with  'Oh Baby' fondant text styling"
   },
   {
     id: 8,
-    src: "/images/princess-dome-cakes.jpg",
+    src: "/api/images/baby shower/PHOTO-2024-11-28-02-10-01.jpg",
     alt: "Princess Dome Cakes",
     category: "Custom",
-    description: "Collection of princess-style dome cakes in lime green and pink colors"
+    description: "Collection of princess-style dome cakes in pink with Minnie Mouse decor"
   },
   {
     id: 9,
-    src: "/images/elegant-white-wedding-cake.jpg",
-    alt: "Elegant White Wedding Cake",
-    category: "Wedding",
-    description: "Four-tier white wedding cake with delicate lace patterns and crystal accents"
+    src: "/api/images/birthday/PHOTO-2024-11-28-02-09-59 4.jpg",
+    alt: "Frozen Themed Birthday Cake",
+    category: "Birthday",
+    description: "Frozen-themed birthday cake for kids"
   },
   {
     id: 10,
-    src: "/images/pink-roses-wedding-cake.jpg",
-    alt: "Pink Roses Wedding Cake",
+    src: "https://images.unsplash.com/photo-1623428454614-abaf00244e52?q=80&w=2487&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    alt: "White Roses Wedding Cake",
     category: "Wedding",
     description: "White wedding cake decorated with cascading pink fondant roses and rhinestone band"
   },
   {
     id: 11,
-    src: "/images/70th-birthday-cake.jpg",
-    alt: "70th Birthday Celebration Cake",
+    src: "/api/images/baby shower/PHOTO-2024-11-28-01-48-05 2.jpg",
+    alt: "Star Wars Birthday Cake",
     category: "Birthday",
-    description: "Three-tier birthday cake with gold accents, photo frame, and pink damask pattern"
+    description: "Birthday cake for a young Star Wars fan"
   },
   {
     id: 12,
-    src: "/images/strawberry-chocolate-cake.jpg",
+    src: "https://images.unsplash.com/photo-1519197462-7755f76e6fbd?q=80&w=2565&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     alt: "Strawberry Chocolate Cake",
     category: "Custom",
     description: "Chocolate cake topped with fresh strawberries and white cream"
   },
   {
     id: 13,
-    src: "/images/macaron-raspberry-cake.jpg",
+    src: "/api/images/custom/PHOTO-2024-11-27-23-41-03 3.jpg",
     alt: "Macaron and Raspberry Cake",
     category: "Custom",
     description: "White cream cake decorated with macarons, fresh raspberries, and chocolate accents"
   },
   {
     id: 14,
-    src: "/images/baby-shower-cake.jpg",
-    alt: "Baby Shower Cake",
+    src: "https://images.unsplash.com/photo-1722951018877-729cb8822cd3?q=80&w=2536&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    alt: "Blue Teddy Bear Cake",
     category: "Baby Shower",
-    description: "Two-tier pink and white cake with baby clothes design"
+    description: "Blue Bear cake for baby boys"
   },
   {
     id: 15,
-    src: "/images/oh-baby-cake.jpg",
-    alt: "Oh Baby Celebration Cake",
-    category: "Baby Shower",
-    description: "Pastel colored cake with baby bottle motifs and 'Oh Baby' topper"
+    src: "https://images.unsplash.com/photo-1681158552000-953036b02df0?q=80&w=2599&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    alt: "Chocolate Cake with Blue Frosting",
+    category: "Custom",
+    description: "Rich-flavored chocolate cake with blue frosting for small gatherings"
   },
   {
     id: 16,
-    src: "/images/princess-dome-cakes.jpg",
-    alt: "Princess Dome Cakes",
-    category: "Custom",
-    description: "Collection of princess-style dome cakes in lime green and pink colors"
+    src: "/api/images/birthday/PHOTO-2024-11-28-02-10-00 3.jpg",
+    alt: "Birthday Cake for Dads",
+    category: "Birthday",
+    description: "Oreo-topped, two-tiered cake for a special dad"
   },
   {
     id: 17,
-    src: "/images/elegant-white-wedding-cake.jpg",
-    alt: "Elegant White Wedding Cake",
-    category: "Wedding",
-    description: "Four-tier white wedding cake with delicate lace patterns and crystal accents"
+    src: "/api/images/custom/PHOTO-2024-11-28-01-48-04.jpg",
+    alt: "Elegant Chocolate Mint and Strawberry Cake",
+    category: "Custom",
+    description: "Tasty chocolate cake with mint and strawberry toppings"
   },
   {
     id: 18,
@@ -145,87 +145,87 @@ const images: GalleryImage[] = [
   },
   {
     id: 19,
-    src: "/images/70th-birthday-cake.jpg",
+    src: "/api/images/birthday/PHOTO-2024-11-28-02-09-59 3.jpg",
     alt: "70th Birthday Celebration Cake",
     category: "Birthday",
     description: "Three-tier birthday cake with gold accents, photo frame, and pink damask pattern"
   },
   {
     id: 20,
-    src: "/images/strawberry-chocolate-cake.jpg",
-    alt: "Strawberry Chocolate Cake",
+    src: "https://images.unsplash.com/photo-1588195538326-c5b1e9f80a1b?q=80&w=2550&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    alt: "Vanilla Cake with Chocolate",
     category: "Custom",
-    description: "Chocolate cake topped with fresh strawberries and white cream"
+    description: "Vanilla-flavored cake with assorted chocolate toppings"
   },
   {
     id: 21,
-    src: "/images/macaron-raspberry-cake.jpg",
-    alt: "Macaron and Raspberry Cake",
+    src: "/api/images/custom/PHOTO-2024-11-28-02-10-00.jpg",
+    alt: "Construction-Themed Cake",
     category: "Custom",
-    description: "White cream cake decorated with macarons, fresh raspberries, and chocolate accents"
+    description: "Customized edible hard hat and construction toolkit cake for a fun occasion"
   },
   {
     id: 22,
-    src: "/images/baby-shower-cake.jpg",
-    alt: "Baby Shower Cake",
+    src: "/api/images/custom/PHOTO-2024-11-28-02-10-00 5.jpg",
+    alt: "Baby Shark Themed Cake",
     category: "Baby Shower",
-    description: "Two-tier pink and white cake with baby clothes design"
+    description: "Baby Shark themed cake"
   },
   {
     id: 23,
-    src: "/images/oh-baby-cake.jpg",
-    alt: "Oh Baby Celebration Cake",
-    category: "Baby Shower",
-    description: "Pastel colored cake with baby bottle motifs and 'Oh Baby' topper"
+    src: "/api/images/custom/PHOTO-2024-11-27-23-50-46.jpg",
+    alt: "Macaron Themed Cakes",
+    category: "Custom",
+    description: "Multiple flavors of cakes styled as macarons"
   },
   {
     id: 24,
-    src: "/images/princess-dome-cakes.jpg",
-    alt: "Princess Dome Cakes",
+    src: "/api/images/custom/PHOTO-2024-11-28-02-10-00 2.jpg",
+    alt: "Hairstylist Kit Themed Cake",
     category: "Custom",
-    description: "Collection of princess-style dome cakes in lime green and pink colors"
+    description: "An edible toolkit for a hairstylist"
   },
   {
     id: 25,
-    src: "/images/elegant-white-wedding-cake.jpg",
-    alt: "Elegant White Wedding Cake",
-    category: "Wedding",
-    description: "Four-tier white wedding cake with delicate lace patterns and crystal accents"
+    src: "/api/images/custom/PHOTO-2024-11-28-02-09-58.jpg",
+    alt: "Chef-Themed Cake",
+    category: "Custom",
+    description: "Inspired by a chef's uniform"
   },
   {
     id: 26,
-    src: "/images/pink-roses-wedding-cake.jpg",
-    alt: "Pink Roses Wedding Cake",
+    src: "/api/images/custom/PHOTO-2024-11-28-01-48-05 3.jpg",
+    alt: "Multi-tiered Graduation Cake",
     category: "Wedding",
-    description: "White wedding cake decorated with cascading pink fondant roses and rhinestone band"
+    description: "White Graduation cake with burgundy accents for a proud class"
   },
   {
     id: 27,
-    src: "/images/70th-birthday-cake.jpg",
-    alt: "70th Birthday Celebration Cake",
+    src: "/api/images/birthday/PHOTO-2024-11-28-02-09-59 2.jpg",
+    alt: " Pink Birthday Celebration Cake",
     category: "Birthday",
-    description: "Three-tier birthday cake with gold accents, photo frame, and pink damask pattern"
+    description: "Pink custom birthday cake with rose decor and stylized edible patterns"
   },
   {
     id: 28,
-    src: "/images/strawberry-chocolate-cake.jpg",
-    alt: "Strawberry Chocolate Cake",
+    src: "/api/images/custom/PHOTO-2024-11-28-02-09-59.jpg",
+    alt: "Money Bag Cake",
     category: "Custom",
-    description: "Chocolate cake topped with fresh strawberries and white cream"
+    description: "Chocolate cake topped with edible dollars and gold-covered chocolates"
   },
   {
     id: 29,
-    src: "/images/macaron-raspberry-cake.jpg",
-    alt: "Macaron and Raspberry Cake",
-    category: "Custom",
-    description: "White cream cake decorated with macarons, fresh raspberries, and chocolate accents"
+    src: "/api/images/custom/PHOTO-2024-11-27-23-47-04.jpg",
+    alt: "White and Pink Rose Engagement Cake",
+    category: "Wedding",
+    description: "White cream cake decorated with pink roses for engagements"
   },
   {
     id: 30,
-    src: "/images/baby-shower-cake.jpg",
-    alt: "Baby Shower Cake",
-    category: "Baby Shower",
-    description: "Two-tier pink and white cake with baby clothes design"
+    src: "/api/images/custom/PHOTO-2024-11-28-02-10-01 3.jpg",
+    alt: "Paw Patrol Themed Cake",
+    category: "Birthday",
+    description: "Single tiered Paw Patrol themed cake with Paw Patrol toppers"
   }
 ];
 
