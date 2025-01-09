@@ -7,7 +7,7 @@ type OrderPDFProps = {
   orderNumber: string;
   orderDetails: OrderDetails;
   contactDetails: ContactDetails;
-  imageKeys?: string[]; // List of image keys from Supabase bucket
+  imageKeys?: string[];
 };
 
 export async function generateOrderPDF({
@@ -18,61 +18,131 @@ export async function generateOrderPDF({
 }: OrderPDFProps) {
   const doc = new jsPDF();
 
+  // Define colors
+  const primaryColor = "#FF69B4"; // Hot Pink
+  const secondaryColor = "#8A2BE2"; // Blue Violet
+
+  // Add logo
+  const logoUrl = "api/images/logo.png"; // Replace with your actual logo path
+  doc.addImage(logoUrl, "PNG", 10, 10, 30, 30);
+
   // Title
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(28);
+  doc.setTextColor(primaryColor);
+  doc.text("Sweet Delights Bakery", 105, 30, { align: "center" });
+
+  doc.setFont("helvetica", "bold");
   doc.setFontSize(20);
-  doc.text(`Order Summary #${orderNumber}`, 105, 20, { align: "center" });
+  doc.setTextColor(secondaryColor);
+  doc.text(`Order Summary #${orderNumber}`, 105, 45, { align: "center" });
+
+  // Decorative line
+  doc.setDrawColor(primaryColor);
+  doc.setLineWidth(0.5);
+  doc.line(10, 50, 200, 50);
 
   // Order Details Section
-  doc.setFontSize(14);
-  doc.text("Order Details", 10, 40);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(16);
+  doc.setTextColor(primaryColor);
+  doc.text("Order Details", 10, 65);
+
+  doc.setFont("helvetica", "normal");
   doc.setFontSize(12);
-  doc.text(`Type: ${orderDetails.type}`, 10, 50);
-  doc.text(`Servings: ${orderDetails.servings}`, 10, 60);
-  doc.text(`Occasion: ${orderDetails.occasion}`, 10, 70);
-  doc.text(`Delivery Date: ${format(orderDetails.deliveryDate, "PPP")}`, 10, 80);
+  doc.setTextColor(0, 0, 0);
+  let yPos = 75;
+  const lineHeight = 7;
+
+  const addDetailLine = (label: string, value: string) => {
+    doc.setFont("helvetica", "bold");
+    doc.text(`${label}:`, 10, yPos);
+    doc.setFont("helvetica", "normal");
+    doc.text(value, 50, yPos);
+    yPos += lineHeight;
+  };
+
+  addDetailLine("Type", orderDetails.type);
+  addDetailLine("Servings", orderDetails.servings.toString());
+  addDetailLine("Occasion", orderDetails.occasion);
+  addDetailLine("Delivery Date", format(orderDetails.deliveryDate, "PPP"));
 
   if (orderDetails.description) {
-    doc.text(`Description: ${orderDetails.description}`, 10, 90);
+    addDetailLine("Description", orderDetails.description);
   }
   if (orderDetails.allergyInfo) {
-    doc.text(`Allergy Info: ${orderDetails.allergyInfo}`, 10, 100);
+    addDetailLine("Allergy Info", orderDetails.allergyInfo);
   }
 
   // Contact Details Section
-  doc.setFontSize(14);
-  doc.text("Contact Information", 10, 120);
+  yPos += 10;
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(16);
+  doc.setTextColor(primaryColor);
+  doc.text("Contact Information", 10, yPos);
+  yPos += 10;
+
+  doc.setFont("helvetica", "normal");
   doc.setFontSize(12);
-  doc.text(`Name: ${contactDetails.name}`, 10, 130);
-  doc.text(`Email: ${contactDetails.email}`, 10, 140);
-  doc.text(`Phone: ${contactDetails.phone}`, 10, 150);
-  doc.text(`Address: ${contactDetails.address}`, 10, 160);
+  doc.setTextColor(0, 0, 0);
+
+  addDetailLine("Name", contactDetails.name);
+  addDetailLine("Email", contactDetails.email);
+  addDetailLine("Phone", contactDetails.phone);
+  addDetailLine("Address", contactDetails.address);
+
+  // Footer
+  doc.setFont("helvetica", "italic");
+  doc.setFontSize(10);
+  doc.setTextColor(secondaryColor);
+  doc.text("Sweet Delights Bakery - Making your moments sweeter!", 105, 280, { align: "center" });
+  doc.text("123 Cake Street, Dessert Town | 555-CAKE-YUM | www.sweetdelightsbakery.com", 105, 285, { align: "center" });
 
   // Reference Images Section
   if (imageKeys && imageKeys.length > 0) {
     const images = await fetchImagesFromSupabase(imageKeys);
     doc.addPage();
-    doc.setFontSize(14);
-    doc.text("Reference Images", 10, 20);
+    
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(22);
+    doc.setTextColor(primaryColor);
+    doc.text("Reference Images", 105, 20, { align: "center" });
 
-    let yPosition = 30; // Start position for images
-    const imageWidth = 50; // Adjust width
-    const imageHeight = 50; // Adjust height
+    // Decorative line
+    doc.setDrawColor(primaryColor);
+    doc.setLineWidth(0.5);
+    doc.line(10, 25, 200, 25);
 
-    // Filter out any null values and only process valid image URLs
+    let yPosition = 35;
+    const imageWidth = 80;
+    const imageHeight = 80;
+    let xPosition = 10;
+
     const validImages = images.filter((url) => url !== null);
 
-    for (const imageUrl of validImages) {
-      doc.addImage(imageUrl, "WEBP", 10, yPosition, imageWidth, imageHeight);
-      yPosition += imageHeight + 10; // Move to the next position
-      if (yPosition + imageHeight > 280) {
-        doc.addPage();
-        yPosition = 20;
+    for (let i = 0; i < validImages.length; i++) {
+      const imageUrl = validImages[i];
+      if (imageUrl) {
+        doc.addImage(imageUrl, "WEBP", xPosition, yPosition, imageWidth, imageHeight);
+        
+        if ((i + 1) % 2 === 0) {
+          xPosition = 10;
+          yPosition += imageHeight + 10;
+        } else {
+          xPosition += imageWidth + 10;
+        }
+
+        if (yPosition + imageHeight > 280) {
+          doc.addPage();
+          yPosition = 20;
+          xPosition = 10;
+        }
       }
     }
   }
 
   // Save the PDF
-  doc.save(`order-summary-${orderNumber}.pdf`);
+  doc.save(`sweet-delights-order-${orderNumber}.pdf`);
 }
 
 // Function to fetch image URLs from Supabase
@@ -94,3 +164,4 @@ async function fetchImagesFromSupabase(imageKeys: string[]): Promise<(string | n
 
   return signedUrls;
 }
+
