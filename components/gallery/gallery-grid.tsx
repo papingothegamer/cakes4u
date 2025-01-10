@@ -138,10 +138,10 @@ const images: GalleryImage[] = [
   },
   {
     id: 18,
-    src: "/images/pink-roses-wedding-cake.jpg",
-    alt: "Pink Roses Wedding Cake",
+    src: "/api/images/wedding/PHOTO-2024-11-28-01-48-05.jpg",
+    alt: "White and Gold Wedding Cake",
     category: "Wedding",
-    description: "White wedding cake decorated with cascading pink fondant roses and rhinestone band"
+    description: "White wedding cake decorated with cascading gold fondant pearls and marble groom and bride topper"
   },
   {
     id: 19,
