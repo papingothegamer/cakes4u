@@ -19,12 +19,7 @@ export default function DashboardPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Don't do anything while auth is loading
-    if (authLoading) {
-      return;
-    }
-
-    // Redirect if no user
+    if (authLoading) return;
     if (!user) {
       router.push("/auth/login");
       return;
@@ -32,7 +27,7 @@ export default function DashboardPage() {
 
     async function loadOrders() {
       try {
-        if (!user) return; 
+        if (!user) return;
         const userOrders = await getUserOrders(user.id);
         setOrders(userOrders);
       } catch (error) {
@@ -53,47 +48,56 @@ export default function DashboardPage() {
     loadOrders();
   }, [user, authLoading, router, toast]);
 
-  // Show loading state while auth is being checked
   if (authLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">Checking authentication...</div>
-      </div>
-    );
+    return <LoadingScreen message="Checking authentication..." />;
   }
 
-  // Show loading state while redirecting
   if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">Redirecting to login...</div>
-      </div>
-    );
+    return <LoadingScreen message="Redirecting to login..." />;
   }
+
+  const hasOrders = orders.length > 0;
 
   return (
-    <div className="min-h-screen py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold">My Orders</h1>
-            <p className="mt-2 text-gray-600">
-              View and manage your cake orders
-            </p>
-          </div>
-          <Button asChild>
-            <Link href="/order">Place New Order</Link>
-          </Button>
+    <div className="min-h-screen py-6 sm:py-12 flex flex-col">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold">My Orders</h1>
+          <p className="mt-2 text-sm sm:text-base text-gray-600">
+            View and manage your cake orders
+          </p>
         </div>
 
         {loading ? (
-          <div className="text-center py-12">Loading orders...</div>
-        ) : orders.length === 0 ? (
+          <LoadingScreen message="Loading orders..." />
+        ) : !hasOrders ? (
           <EmptyOrders />
         ) : (
-          <OrdersTable orders={orders} />
+          <div className="bg-white shadow-md rounded-lg overflow-hidden">
+            <OrdersTable orders={orders} />
+          </div>
         )}
+      </div>
+
+      {hasOrders && (
+        <div className="flex-grow flex items-center justify-center mt-2">
+          <Button asChild className="w-2/4 sm:w-auto">
+            <Link href="/order">Place New Order</Link>
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function LoadingScreen({ message }: { message: string }) {
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
+        <p className="text-lg">{message}</p>
       </div>
     </div>
   );
 }
+

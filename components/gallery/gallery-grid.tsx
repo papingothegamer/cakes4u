@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { X } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 type GalleryImage = {
   id: number;
@@ -237,6 +237,21 @@ export function GalleryGrid() {
     ? images 
     : images.filter(img => img.category === selectedCategory);
 
+  const handleImageNavigation = useCallback((direction: 'prev' | 'next') => {
+    if (!selectedImage) return;
+
+    const currentIndex = filteredImages.findIndex(img => img.id === selectedImage.id);
+    let newIndex: number;
+
+    if (direction === 'prev') {
+      newIndex = currentIndex > 0 ? currentIndex - 1 : filteredImages.length - 1;
+    } else {
+      newIndex = currentIndex < filteredImages.length - 1 ? currentIndex + 1 : 0;
+    }
+
+    setSelectedImage(filteredImages[newIndex]);
+  }, [selectedImage, filteredImages]);
+
   return (
     <div className="space-y-6 px-4 py-8">
       <div className="flex flex-wrap gap-2 justify-center">
@@ -284,47 +299,72 @@ export function GalleryGrid() {
 
       <AnimatePresence>
         {selectedImage && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4"
-            onClick={() => setSelectedImage(null)}
-          >
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm">
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="relative max-w-4xl w-full bg-white rounded-lg overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
+              className="relative w-full max-w-5xl mx-4"
             >
-              <div className="relative aspect-square md:aspect-[4/3] lg:aspect-[16/9]">
+              {/* Image Container with Fixed Aspect Ratio */}
+              <div className="relative w-full h-[calc(100vh-16rem)] max-h-[800px] min-h-[400px] bg-white rounded-t-lg">
                 <Image
                   src={selectedImage.src}
                   alt={selectedImage.alt}
                   fill
                   sizes="(max-width: 1024px) 100vw, 75vw"
-                  className="object-contain"
+                  className="object-contain p-4"
+                  priority
                 />
+                
+                {/* Navigation Controls with Semi-transparent Background */}
+                <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/50 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/50 to-transparent" />
+                
+                {/* Close Button with Better Visibility */}
+                <Button
+                  variant="secondary"
+                  size="icon"
+                  className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white z-10"
+                  onClick={() => setSelectedImage(null)}
+                >
+                  <X className="h-5 w-5" />
+                </Button>
+
+                {/* Navigation Buttons with Better Visibility */}
+                <div className="absolute inset-y-0 left-0 flex items-center">
+                  <Button
+                    variant="secondary"
+                    size="icon"
+                    className="ml-4 bg-black/50 hover:bg-black/70 text-white"
+                    onClick={() => handleImageNavigation('prev')}
+                  >
+                    <ChevronLeft className="h-6 w-6" />
+                  </Button>
+                </div>
+
+                <div className="absolute inset-y-0 right-0 flex items-center">
+                  <Button
+                    variant="secondary"
+                    size="icon"
+                    className="mr-4 bg-black/50 hover:bg-black/70 text-white"
+                    onClick={() => handleImageNavigation('next')}
+                  >
+                    <ChevronRight className="h-6 w-6" />
+                  </Button>
+                </div>
               </div>
-              <div className="p-4 bg-white">
+
+              {/* Image Information Section */}
+              <div className="p-6 bg-white rounded-b-lg">
                 <h2 className="text-2xl font-semibold mb-2">{selectedImage.alt}</h2>
                 <p className="text-gray-600 mb-2">{selectedImage.description}</p>
                 <p className="text-sm text-gray-500">Category: {selectedImage.category}</p>
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute top-4 right-4 text-white hover:bg-white/20"
-                onClick={() => setSelectedImage(null)}
-              >
-                <X className="h-6 w-6" />
-              </Button>
             </motion.div>
-          </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </div>
   );
 }
-
