@@ -36,10 +36,10 @@ export function HeroSection() {
               asChild
               size="lg"
               variant="outline"
-              className="bg-white/10 hover:bg-white/20 border-white"
+              className="bg-white/10 hover:bg-white/20 border-white text-white hover:text-white"
             >
-              <Link href="/gallery">View Gallery</Link>
-            </Button>
+       <Link href="/gallery">View Gallery</Link>
+             </Button>
           </div>
         </div>
       </div>
